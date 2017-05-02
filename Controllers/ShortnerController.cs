@@ -8,26 +8,24 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace net_url_shortner.Controllers
 {
-
-    [Route("api")]
-    public class ApiController : Controller
+    public class ShortnerController : Controller
     {
         private IDistributedCache _cache;
 
-        public ApiController(IDistributedCache memoryCache)
+        public ShortnerController(IDistributedCache memoryCache)
         {
             _cache = memoryCache;
         }
 
         
-        [HttpGet]
+        [HttpGet][Route("/")]
         public string Index()
         {
             return "Welcome to Url Shortener Api";
         }
 
 
-        [HttpGet("{id}")]
+        [HttpGet("/{id}")]
         public IActionResult GetUrl(string id){
             var value = _cache.Get(id);
             var url = "";
@@ -36,7 +34,7 @@ namespace net_url_shortner.Controllers
                 url = Encoding.UTF8.GetString(value);
             } else {
                 // TODO: Change to landing page Redirect
-                return BadRequest();
+                return View();
             }
         
             return url.Contains("://")? RedirectPermanent(url): RedirectPermanent("http://"+url);
